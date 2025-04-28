@@ -1,61 +1,69 @@
+import tkinter as tk
 import random
 
-def get_computer_choice():
-    return random.choice(['rock', 'paper', 'scissors'])
+# Game logic
+choices = ["Rock", "Paper", "Scissors"]
+user_score = 0
+computer_score = 0
 
-def determine_winner(user, computer):
-    if user == computer:
-        return 'tie'
-    elif (user == 'rock' and computer == 'scissors') or \
-         (user == 'scissors' and computer == 'paper') or \
-         (user == 'paper' and computer == 'rock'):
-        return 'user'
+def play(user_choice):
+    global user_score, computer_score
+
+    computer_choice = random.choice(choices)
+
+    result = ""
+    if user_choice == computer_choice:
+        result = "It's a tie!"
+    elif (user_choice == "Rock" and computer_choice == "Scissors") or \
+         (user_choice == "Paper" and computer_choice == "Rock") or \
+         (user_choice == "Scissors" and computer_choice == "Paper"):
+        user_score += 1
+        result = "You win!"
     else:
-        return 'computer'
+        computer_score += 1
+        result = "Computer wins!"
 
-def display_scores(user_score, computer_score):
-    print(f"\nCurrent Scores => You: {user_score} | Computer: {computer_score}\n")
+    result_label.config(text=f"You chose: {user_choice}\nComputer chose: {computer_choice}\n{result}")
+    score_label.config(text=f"Score - You: {user_score} | Computer: {computer_score}")
 
-def play_game():
+# Reset game scores
+def reset_game():
+    global user_score, computer_score
     user_score = 0
     computer_score = 0
+    result_label.config(text="Choose Rock, Paper, or Scissors to start playing!")
+    score_label.config(text="Score - You: 0 | Computer: 0")
 
-    print("🎮 Welcome to Rock, Paper, Scissors!")
-    print("Rules: Rock beats Scissors, Scissors beats Paper, Paper beats Rock\n")
+# Create window
+window = tk.Tk()
+window.title("Rock Paper Scissors Game")
+window.geometry("400x300")
+window.config(bg="#f0f0f0")
 
-    while True:
-        user_choice = input("Enter your choice (rock/paper/scissors or q to quit): ").lower()
+title = tk.Label(window, text="Rock Paper Scissors", font=("Arial", 18, "bold"), bg="#f0f0f0")
+title.pack(pady=10)
 
-        if user_choice == 'q':
-            print("Thanks for playing!")
-            break
+result_label = tk.Label(window, text="Choose Rock, Paper, or Scissors to start playing!", font=("Arial", 12), bg="#f0f0f0")
+result_label.pack(pady=10)
 
-        if user_choice not in ['rock', 'paper', 'scissors']:
-            print("Invalid choice. Please choose rock, paper, or scissors.")
-            continue
+score_label = tk.Label(window, text="Score - You: 0 | Computer: 0", font=("Arial", 12), bg="#f0f0f0")
+score_label.pack(pady=10)
 
-        computer_choice = get_computer_choice()
-        print(f"\n🧍 You chose: {user_choice}")
-        print(f"🤖 Computer chose: {computer_choice}")
+# Buttons
+button_frame = tk.Frame(window, bg="#f0f0f0")
+button_frame.pack(pady=10)
 
-        result = determine_winner(user_choice, computer_choice)
+rock_btn = tk.Button(button_frame, text="Rock", width=10, command=lambda: play("Rock"))
+rock_btn.grid(row=0, column=0, padx=10)
 
-        if result == 'tie':
-            print("🤝 It's a tie!")
-        elif result == 'user':
-            print("🎉 You win this round!")
-            user_score += 1
-        else:
-            print("😞 You lose this round.")
-            computer_score += 1
+paper_btn = tk.Button(button_frame, text="Paper", width=10, command=lambda: play("Paper"))
+paper_btn.grid(row=0, column=1, padx=10)
 
-        display_scores(user_score, computer_score)
+scissors_btn = tk.Button(button_frame, text="Scissors", width=10, command=lambda: play("Scissors"))
+scissors_btn.grid(row=0, column=2, padx=10)
 
-        play_again = input("Do you want to play another round? (y/n): ").lower()
-        if play_again != 'y':
-            print("Game Over. Final Scores:")
-            display_scores(user_score, computer_score)
-            break
+# Reset Button
+reset_btn = tk.Button(window, text="Play Again", command=reset_game)
+reset_btn.pack(pady=20)
 
-# Run the game
-play_game()
+window.mainloop()
